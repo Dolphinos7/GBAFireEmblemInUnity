@@ -1,7 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-
+//TestingComment
 public class CustomMovementScanning : MonoBehaviour
 {
     List<Tile> movableTiles = new List<Tile>();
