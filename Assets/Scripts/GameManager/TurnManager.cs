@@ -5,6 +5,8 @@ using UnityEngine;
 public class TurnManager : MonoBehaviour
 {
     public static bool isPlayerPhase = true;
+    public static Queue<GameObject> enemyQueue;
+    public static GameObject currentEnemy;
 
     public static void makePlayerPhase()
     {
@@ -28,6 +30,7 @@ public class TurnManager : MonoBehaviour
 
     public static void makeEnemyPhase()
     {
+        GenerateEnemyQueue();
         FindObjectOfType<TurnManager>().clearTileLists();
         foreach (GameObject t in FindObjectOfType<MapData>().tiles)
         {
@@ -35,9 +38,14 @@ public class TurnManager : MonoBehaviour
         }
         foreach (GameObject character in FindObjectOfType<MapData>().getEnemies())
         {
-            character.GetComponent<EnemyMove>().refresh();
+            character.GetComponent<EnemyRushAI>().refresh();
         }
         isPlayerPhase = false;
+        GenerateEnemyQueue();
+        if (enemyQueue.Count != 0)
+        {
+            GetNextEnemy();
+        }
         //Refresh enemies
     }
 
@@ -90,10 +98,24 @@ public class TurnManager : MonoBehaviour
 
         foreach (GameObject character in FindObjectOfType<MapData>().getEnemies())
         {
-            character.GetComponent<EnemyMove>().removeEdgeTiles();
-            character.GetComponent<EnemyMove>().removeStaffableTiles();
-            character.GetComponent<EnemyMove>().removeAttackableTiles();
-            character.GetComponent<EnemyMove>().removeSelectableTiles();
+            character.GetComponent<EnemyRushAI>().removeEdgeTiles();
+            character.GetComponent<EnemyRushAI>().removeStaffableTiles();
+            character.GetComponent<EnemyRushAI>().removeAttackableTiles();
+            character.GetComponent<EnemyRushAI>().removeSelectableTiles();
         }
+    }
+
+    public static void GenerateEnemyQueue()
+    {
+        enemyQueue = new Queue<GameObject>();
+        foreach (GameObject obj in FindObjectOfType<MapData>().getEnemies())
+        {
+            enemyQueue.Enqueue(obj);
+        }
+    }
+
+    public static void GetNextEnemy()
+    {
+        currentEnemy = enemyQueue.Dequeue();
     }
 }

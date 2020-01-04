@@ -154,7 +154,9 @@ public class Tile : MonoBehaviour
         }
 
     }
-
+    public Collider2D[] GetOnTopOf(){
+        return Physics2D.OverlapBoxAll(new Vector2(transform.position.x, transform.position.y), new Vector2(.25f, .25f), 0f);
+    }
 
     public int getMoveCost()
     {

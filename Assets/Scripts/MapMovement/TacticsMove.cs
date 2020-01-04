@@ -73,6 +73,8 @@ public class TacticsMove : MonoBehaviour
         currentTile.distance = 0;
         process.Add(currentTile);
         currentTile.visited = true;
+        currentTile.selectable = true;
+        selectableTiles.Add(currentTile);
         //Source tile's parent is null
 
         while (process.Count > 0)
@@ -80,17 +82,28 @@ public class TacticsMove : MonoBehaviour
             process.Sort(process.getComparator());
             Tile t = process[0];
             process.RemoveAt(0);
+            if (t.walkable){
             selectableTiles.Add(t);
-            t.selectable = true;
+            }
+            
             if (canWalk && !canFly)
             {
-                if (t.walkable || t.Equals(currentTile))
+                string tagOn = "";
+                foreach (Collider2D collider in t.GetOnTopOf()){
+                    if (collider.gameObject.tag != null){
+                        if (collider.gameObject.tag == "Player" || collider.gameObject.tag == "Enemy"){
+                            tagOn = collider.gameObject.tag;
+                        }
+                        //Debug.Log(tagOn);
+                    }
+                }
+                if (t.walkable || tagOn == gameObject.tag || t.Equals(currentTile))
                 {
 
                     foreach (Tile tile in t.adjacencyList)
                     {
 
-                        if (!tile.visited && tile.walkable && t.distance + tile.getMoveCost() <= move)
+                        if (!tile.visited && tile.isWalkable && t.distance + tile.getMoveCost() <= move)
                         {
 
                             tile.parent = t;
@@ -104,6 +117,10 @@ public class TacticsMove : MonoBehaviour
 
             }
 
+        }
+
+        foreach (Tile t in selectableTiles){
+            t.selectable = true;
         }
 
     }
