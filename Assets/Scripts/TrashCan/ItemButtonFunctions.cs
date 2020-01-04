@@ -18,7 +18,7 @@ public class ItemButtonFunctions : MonoBehaviour
     {
 
         Debug.Log("alsoworking");
-        ArrayList players = GameObject.Find("GameMaster").GetComponent<MapData>().getPlayers();
+        List<GameObject> players = GameObject.Find("GameMaster").GetComponent<MapData>().getPlayers();
         foreach (GameObject player in players)
         {
             if (player.GetComponent<PlayerCharacter>().getSelected())

@@ -20,7 +20,8 @@ public class Character : MonoBehaviour
 
     }
 
-    public CharacterStats getStats(){
+    public CharacterStats getStats()
+    {
         return stats;
     }
 

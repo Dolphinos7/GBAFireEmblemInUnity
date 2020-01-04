@@ -26,7 +26,8 @@ public class PlayerCharacter : Character
             GetComponent<Animator>().enabled = false;
             GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("GrayscaleHector");
         }
-        else{
+        else
+        {
             GetComponent<Animator>().enabled = true;
             GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("Empty");
         }
@@ -67,7 +68,8 @@ public class PlayerCharacter : Character
         return selected;
     }
 
-    public void refresh(){
+    public void refresh()
+    {
         waiting = false;
         getStats().setCanMove(true);
         GameObject.Find("GameMaster").GetComponent<UIController>().enableCursor();

@@ -21,7 +21,7 @@ public class WaitButtonFunctions : MonoBehaviour
                 GameObject.Find("PopupMenu").GetComponent<PopupMenuFunctions>().getVisibility())
         {
             Debug.Log("working");
-            ArrayList players = GameObject.Find("GameMaster").GetComponent<MapData>().getPlayers();
+            List<GameObject> players = GameObject.Find("GameMaster").GetComponent<MapData>().getPlayers();
             foreach (GameObject player in players){
                 if (player.GetComponent<PlayerCharacter>().getSelected()){
                     selectedPlayer = player;

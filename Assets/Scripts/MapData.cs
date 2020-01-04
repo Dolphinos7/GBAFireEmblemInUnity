@@ -6,9 +6,10 @@ public class MapData : MonoBehaviour
 {
 
     //Declaring fields
-    private ArrayList enemies;
-    private ArrayList players;
-    private ArrayList allies;
+    private List<GameObject> enemies;
+    private List<GameObject> players;
+    private List<GameObject> allies;
+    public List<GameObject> tiles;
     Grid grid;
     void Start()
     {
@@ -17,17 +18,25 @@ public class MapData : MonoBehaviour
 
         //Initializes ArrayLists
 
-        enemies = new ArrayList();
-        players = new ArrayList();
-        allies = new ArrayList();
+        enemies = new List<GameObject>();
+        players = new List<GameObject>();
+        allies = new List<GameObject>();
+        tiles = new List<GameObject>();
+        
 
 
 
 
         //Creates an arraylist of all starting enemies
-        for (int i = 0; i < GameObject.FindGameObjectsWithTag("Enemy").GetLength(0); i++)
+        foreach (GameObject enemy in GameObject.FindGameObjectsWithTag("Enemy"))
         {
-            enemies.Add(GameObject.FindGameObjectsWithTag("Enemy")[i]);
+            enemies.Add(enemy);
+
+        }
+
+        for (int i = 0; i < GameObject.FindGameObjectsWithTag("Terrain").GetLength(0); i++)
+        {
+            tiles.Add(GameObject.FindGameObjectsWithTag("Terrain")[i]);
 
         }
 
@@ -47,15 +56,15 @@ public class MapData : MonoBehaviour
     }
 
 
-    public ArrayList getEnemies()
+    public List<GameObject> getEnemies()
     {
         return enemies;
     }
-    public ArrayList getPlayers()
+    public List<GameObject> getPlayers()
     {
         return players;
     }
-    public ArrayList getAllies()
+    public List<GameObject> getAllies()
     {
         return allies;
     }

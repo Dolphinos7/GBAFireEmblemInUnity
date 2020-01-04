@@ -4,6 +4,7 @@ using UnityEngine;
 
 public class TacticsMove : MonoBehaviour
 {
+    public bool moveMode;
     public bool canWalk = true;
     public bool canFly = false;
     public int move;
@@ -12,14 +13,14 @@ public class TacticsMove : MonoBehaviour
     public bool moving = false;
     private Vector3 heading;
     private Vector3 velocity;
-    public float movespeed = 2;
+    private float movespeed = 5;
     public List<Tile> edgeTiles = new List<Tile>();
-    List<Tile> selectableTiles = new List<Tile>();
-    List<Tile> attackableTiles = new List<Tile>();
-    List<Tile> staffableTiles = new List<Tile>();
-    GameObject[] tiles;
+    public List<Tile> selectableTiles = new List<Tile>();
+    public List<Tile> attackableTiles = new List<Tile>();
+    public List<Tile> staffableTiles = new List<Tile>();
+    public GameObject[] tiles;
     Stack<Tile> path = new Stack<Tile>();
-    Tile currentTile;
+    public Tile currentTile;
 
 
     //Stuff that needs definite updates later
@@ -27,6 +28,7 @@ public class TacticsMove : MonoBehaviour
     protected void init()
     {
         tiles = GameObject.FindGameObjectsWithTag("Terrain");
+
 
         findAttackRange();
         findMovementRange();
@@ -47,7 +49,8 @@ public class TacticsMove : MonoBehaviour
 
     public void findMovementRange()
     {
-        move = GetComponent<PlayerCharacter>().getStats().getMovement();
+        //move = GetComponent<PlayerCharacter>().getStats().getMovement();
+        move = 5;
     }
 
     public void findAttackRange()
@@ -81,7 +84,7 @@ public class TacticsMove : MonoBehaviour
             t.selectable = true;
             if (canWalk && !canFly)
             {
-                if (t.walkable)
+                if (t.walkable || t.Equals(currentTile))
                 {
 
                     foreach (Tile tile in t.adjacencyList)
@@ -205,18 +208,30 @@ public class TacticsMove : MonoBehaviour
         }
         else
         {
+            moving = false;
             removeSelectableTiles();
             removeAttackableTiles();
             removeStaffableTiles();
-            moving = false;
+            removeEdgeTiles();
+            
         }
     }
 
-    protected void removeSelectableTiles()
+    
+    public void removeEdgeTiles(){
+        foreach (Tile tile in edgeTiles)
+        {
+            tile.Reset();
+        }
+
+        edgeTiles.Clear();
+    }
+    public void removeSelectableTiles()
     {
         if (currentTile != null)
         {
             currentTile.current = false;
+            currentTile.Reset();
             currentTile = null;
         }
         foreach (Tile tile in selectableTiles)
@@ -298,7 +313,7 @@ public class TacticsMove : MonoBehaviour
                     {
                         currentTile.attackableHighlight = true;
                     }
-                    if (currentTile.attackable)
+                    if (currentTile.attackable && !attackableTiles.Contains(currentTile))
                     {
                         attackableTiles.Add(currentTile);
                     }
@@ -347,7 +362,7 @@ public class TacticsMove : MonoBehaviour
                     {
                         currentTile.staffableHighlight = true;
                     }
-                    if (currentTile.staffable)
+                    if (currentTile.staffable && !staffableTiles.Contains(currentTile))
                     {
                         staffableTiles.Add(currentTile);
                     }
@@ -365,6 +380,7 @@ public class TacticsMove : MonoBehaviour
             }
         }
     }
+
 
 
 }

@@ -95,7 +95,7 @@ public class GenerateButtons : MonoBehaviour
     public void onWaitButtonClick()
     {
         popup = GameObject.Find("PopupMenu").GetComponent<PopupMenuFunctions>();
-        ArrayList players = GameObject.Find("GameMaster").GetComponent<MapData>().getPlayers();
+        List<GameObject> players = GameObject.Find("GameMaster").GetComponent<MapData>().getPlayers();
         foreach (GameObject player in players)
         {
             if (player.GetComponent<PlayerCharacter>().getSelected())
@@ -114,7 +114,7 @@ public class GenerateButtons : MonoBehaviour
     public void onItemButtonClick()
     {
         popup = GameObject.Find("PopupMenu").GetComponent<PopupMenuFunctions>();
-        ArrayList players = GameObject.Find("GameMaster").GetComponent<MapData>().getPlayers();
+        List<GameObject> players = GameObject.Find("GameMaster").GetComponent<MapData>().getPlayers();
         foreach (GameObject player in players)
         {
             if (player.GetComponent<PlayerCharacter>().getSelected())

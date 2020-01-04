@@ -8,6 +8,7 @@ public class Tile : MonoBehaviour
     public bool flyable = true;
     public bool attackable = false;
     public bool attackableHighlight = false;
+    public bool isWalkable = true;
     public bool walkable = true;
     public bool current = false;
     public bool target = false;
@@ -35,6 +36,7 @@ public class Tile : MonoBehaviour
         if (tileName == "cliff")
         {
             walkable = false;
+            isWalkable = false;
         }
         if (tileName == "mountain")
         {
@@ -47,8 +49,25 @@ public class Tile : MonoBehaviour
     }
     void Update()
     {
-        
-        
+
+        if (isWalkable)
+        {
+            Collider2D[] colliders = Physics2D.OverlapBoxAll(new Vector2(transform.position.x, transform.position.y), new Vector2(.25f, .25f), 0f);
+            bool makeWalkable = true;
+            foreach (Collider2D collider in colliders)
+            {
+                if (collider.tag == "Player" || collider.tag == "Enemy")
+                {
+                    walkable = false;
+                    makeWalkable = false;
+                }
+            }
+            if (makeWalkable)
+            {
+                walkable = true;
+            }
+        }
+
         if (current)
         {
             GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("MovementTile");
@@ -62,28 +81,32 @@ public class Tile : MonoBehaviour
         {
             GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("Selector");
         }
-        else if (attackableHighlight){
+        else if (attackableHighlight)
+        {
             GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("AttackTile");
         }
-        else if (staffableHighlight){
+        else if (staffableHighlight)
+        {
             GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("StaffTile");
         }
         else if (selectable)
         {
             GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("MovementTile");
         }
-        /*
-        Failure to find edge tiles
-        else if(!isParent && selectable){
-            Debug.Log("working");
-            GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("Selector");
-        }
-        */
         else
         {
             GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("Empty");
         }
-        
+
+    }
+
+    public void HideHighlights()
+    {
+        current = false;
+        target = false;
+        attackableHighlight = false;
+        staffableHighlight = false;
+        selectable = false;
     }
 
     public void Reset()
@@ -101,6 +124,7 @@ public class Tile : MonoBehaviour
         visited = false;
         parent = null;
         distance = 0;
+        isEdge = false;
 
     }
 
@@ -116,16 +140,21 @@ public class Tile : MonoBehaviour
 
     public void CheckTile(Vector2 direction)
     {
-        Collider2D collider = Physics2D.OverlapBox(new Vector2(transform.position.x + direction.x, transform.position.y + direction.y), new Vector2(.25f, .25f), 0f);
-        if (collider != null)
+        Collider2D[] colliders = Physics2D.OverlapBoxAll(new Vector2(transform.position.x + direction.x, transform.position.y + direction.y), new Vector2(.25f, .25f), 0f);
+        foreach (Collider2D collider in colliders)
         {
-            Tile tile = collider.GetComponent<Tile>();
-            if (tile != null && (tile.walkable || flyable))
+            if (collider.tag == "Terrain")
             {
-                adjacencyList.Add(tile);
+                Tile tile = collider.GetComponent<Tile>();
+                if (tile != null && (tile.isWalkable || tile.flyable))
+                {
+                    adjacencyList.Add(tile);
+                }
             }
         }
+
     }
+
 
     public int getMoveCost()
     {
