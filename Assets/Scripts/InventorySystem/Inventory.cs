@@ -2,19 +2,36 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Inventory : List<Item>
+/**
+This class handles the functionality of the Inventory system. The functionality is implemented using a List<Items>
+*/
+public class Inventory
 {
+    private List<Item> itemList;
+    private static readonly capacity = 6;
+    
     public Inventory(){
-
+        itemList = new List<Item>();
     }
 
-    public void showContents(){
-        foreach (Item item in this){
-            Debug.Log(item.ToString());
+    public boolean GiveItem(Item toAdd){
+        if(itemList.Count<=6){
+            itemList.Add(toAdd);
+            return true;
         }
+        return false; 
     }
 
-    public void addIronSword(){
-        Add(new Weapon("iron sword"));
+    public boolean ThrowOutItem(Item toRemove){
+        return itemList.Remove(toRemove)
     }
+    
+    public boolean SwapItem(Item toAdd, Item toRemove){
+        if(itemList.Contains(toRemove)){
+            ThrowOutItem(toRemove);
+            return GiveItem(toAdd);
+        }
+        return false;
+    }
+
 }
