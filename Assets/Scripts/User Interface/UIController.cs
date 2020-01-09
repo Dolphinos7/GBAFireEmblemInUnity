@@ -19,6 +19,7 @@ public class UIController : MonoBehaviour
         popupMenuFunctions.setVisibility(true);
         GameObject.Find("Canvas").GetComponentInChildren<PopupMenuFunctions>().updateVisibility();
     }
+    
 
     public void hidePopupMenu()
     {

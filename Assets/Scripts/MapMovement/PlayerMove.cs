@@ -6,7 +6,7 @@ public class PlayerMove : TacticsMove
 {
 
 
-    private bool tilesSelected = false;
+    public bool tilesSelected = false;
     // Start is called before the first frame update
     void Start()
     {
@@ -14,8 +14,13 @@ public class PlayerMove : TacticsMove
     }
 
     // Update is called once per frame
+
+
     void Update()
     {
+        
+/*
+
         if (TurnManager.isPlayerPhase)
         {
 
@@ -41,12 +46,16 @@ public class PlayerMove : TacticsMove
                 tilesSelected = false;
             }
         }
+
+        */
     }
 
     public void checkMouse()
     {
-        if (Input.GetMouseButtonDown(0))
+        
+        if (Input.GetMouseButtonDown(0) && GameObject.Find("GameMaster").GetComponent<UIController>().getCursor().activeSelf)
         {
+            
             Transform cursorTrans = GameObject.Find("GameMaster").GetComponent<UIController>().getCursor().GetComponent<Transform>();
             Collider2D[] colliders = Physics2D.OverlapBoxAll(new Vector2(cursorTrans.position.x, cursorTrans.transform.position.y), new Vector2(.25f, .25f), 0f);
             foreach (Collider2D collider in colliders)
@@ -57,9 +66,10 @@ public class PlayerMove : TacticsMove
 
                     if (t.selectable)
                     {
+                    
                         moveToTile(t);
                         moveMode = false;
-                        GetComponent<PlayerCharacter>().getStats().setCanMove(false);
+                        //GetComponent<PlayerCharacter>().getStats().setCanMove(false);
                     }
                 }
             }

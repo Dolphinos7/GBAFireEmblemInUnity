@@ -4,6 +4,7 @@ using UnityEngine;
 
 public class Weapon : Item
 {
+
     public int might;
     public int crit;
     public int hit;
@@ -12,9 +13,11 @@ public class Weapon : Item
     public int weight;
 
 
-    public Weapon(string name) : base(name){
-        if (name.Equals("iron sword")){
-            
+    public Weapon(string name) : base(name)
+    {
+        if (name.Equals("iron sword"))
+        {
+
             requiredRank = 'E';
             crit = 0;
             weight = 0;
@@ -24,9 +27,11 @@ public class Weapon : Item
         }
     }
 
-    public override string ToString(){
+    public override string ToString()
+    {
         string toReturn = "[";
         toReturn += "might " + might + ", crit " + crit;
         return toReturn;
     }
+
 }

@@ -5,8 +5,10 @@ using UnityEngine;
 public class Tile : MonoBehaviour
 {
     //public bool isParent = false; Failure to find edge tiles
+    public bool moveCursor;
     public bool flyable = true;
     public bool attackable = false;
+    public bool selectableHighlight = false;
     public bool attackableHighlight = false;
     public bool isWalkable = true;
     public bool walkable = true;
@@ -47,8 +49,42 @@ public class Tile : MonoBehaviour
             moveCost = 4;
         }
     }
+    void FixedUpdate()
+    {
+        if (moveCursor && GameObject.Find("GameMaster").GetComponent<UIController>().getCursor().activeSelf)
+        {
+            GameObject cursor = GameObject.Find("GameMaster").GetComponent<UIController>().getCursor();
+            if (Mathf.Abs(cursor.transform.position.x - transform.position.x) > .05f || Mathf.Abs(cursor.transform.position.y - transform.position.y) > .05f)
+            {
+                Vector3 cursorPosition = cursor.transform.position;
+                GameObject.Find("GameMaster").GetComponent<UIController>().getCursor().transform.position = Vector3.Lerp(cursorPosition, transform.position, .3f);
+            }
+            else
+            {
+                cursor.transform.position = transform.position;
+            }
+
+        }
+    }
     void Update()
     {
+
+
+        if (selectableHighlight)
+        {
+            bool dontChange = false;
+            foreach (Collider2D collider in GetOnTopOf())
+            {
+                if (collider.tag == "Player" || collider.tag == "Enemy")
+                {
+                    dontChange = true;
+                }
+            }
+            if (!dontChange)
+            {
+                selectable = true;
+            }
+        }
 
         if (isWalkable)
         {
@@ -81,15 +117,15 @@ public class Tile : MonoBehaviour
         {
             GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("Selector");
         }
-        else if (attackableHighlight)
+        else if (attackableHighlight && !selectableHighlight)
         {
             GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("AttackTile");
         }
-        else if (staffableHighlight)
+        else if (staffableHighlight && !selectableHighlight)
         {
             GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("StaffTile");
         }
-        else if (selectable)
+        else if (selectable || selectableHighlight)
         {
             GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("MovementTile");
         }
@@ -107,6 +143,7 @@ public class Tile : MonoBehaviour
         attackableHighlight = false;
         staffableHighlight = false;
         selectable = false;
+        selectableHighlight = false;
     }
 
     public void Reset()
@@ -116,6 +153,7 @@ public class Tile : MonoBehaviour
         current = false;
         target = false;
         selectable = false;
+        selectableHighlight = false;
         attackable = false;
         attackableHighlight = false;
         staffable = false;
@@ -154,7 +192,8 @@ public class Tile : MonoBehaviour
         }
 
     }
-    public Collider2D[] GetOnTopOf(){
+    public Collider2D[] GetOnTopOf()
+    {
         return Physics2D.OverlapBoxAll(new Vector2(transform.position.x, transform.position.y), new Vector2(.25f, .25f), 0f);
     }
 
@@ -165,6 +204,12 @@ public class Tile : MonoBehaviour
 
     public void OnMouseEnter()
     {
-        GameObject.Find("GameMaster").GetComponent<UIController>().getCursor().transform.position = transform.position;
+        moveCursor = true;
+        //GameObject.Find("GameMaster").GetComponent<UIController>().getCursor().transform.position = transform.position;
+
+    }
+    public void OnMouseExit()
+    {
+        moveCursor = false;
     }
 }

@@ -10,10 +10,12 @@ public class GenerateButtons : MonoBehaviour
     GameObject selectedPlayer;
     public GameObject emptyButton;
     private bool waitVisible;
+    public bool enableCursor;
     private bool itemVisible;
     private bool attackVisible;
     private bool tradeVisible;
     private bool staffVisible;
+    private bool cancelVisible;
     private int numButtons;
     void Start()
     {
@@ -25,8 +27,16 @@ public class GenerateButtons : MonoBehaviour
         attackVisible = true;
         tradeVisible = true;
         staffVisible = true;
+        cancelVisible = true;
         createButtons();
         hideButtons();
+    }
+
+    void Update(){
+        if (enableCursor){
+            GameObject.Find("GameMaster").GetComponent<UIController>().enableCursor();
+            enableCursor = false;
+        }
     }
     public void createButtons()
     {
@@ -38,6 +48,15 @@ public class GenerateButtons : MonoBehaviour
             numButtons++;
             temp.GetComponent<Text>().text = "Wait";
             temp.GetComponent<Button>().onClick.AddListener(onWaitButtonClick);
+        }
+        if (cancelVisible)
+        {
+            GameObject temp = Instantiate(emptyButton, new Vector3(0, 0, 0), Quaternion.identity);
+            temp.transform.SetParent(transform);
+            temp.GetComponent<RectTransform>().position = gameObject.GetComponent<RectTransform>().position + new Vector3(0, 120, 0) - new Vector3(0, 30 * numButtons, 0);
+            numButtons++;
+            temp.GetComponent<Text>().text = "Cancel";
+            temp.GetComponent<Button>().onClick.AddListener(onCancelButtonClick);
         }
         if (itemVisible)
         {
@@ -108,11 +127,14 @@ public class GenerateButtons : MonoBehaviour
         popup.setVisibility(false);
         popup.updateVisibility();
         selectedPlayer.GetComponent<PlayerCharacter>().waiting = true;
+        selectedPlayer.GetComponent<PlayerCharacter>().inMenu = false;
+        GameObject.Find("GameMaster").GetComponent<UIController>().enableCursor();
 
     }
 
     public void onItemButtonClick()
     {
+        Debug.Log("running");
         popup = GameObject.Find("PopupMenu").GetComponent<PopupMenuFunctions>();
         List<GameObject> players = GameObject.Find("GameMaster").GetComponent<MapData>().getPlayers();
         foreach (GameObject player in players)
@@ -127,9 +149,34 @@ public class GenerateButtons : MonoBehaviour
 
         popup.setVisibility(false);
         popup.updateVisibility();
-        Instantiate(Resources.Load<GameObject>("ItemMenu"));
+        GameObject temp = Instantiate(Resources.Load<GameObject>("ItemMenu"));
+
         //Close PopupMenu
         //Open Item Submenu
+    }
+
+    public void onCancelButtonClick()
+    {
+        popup = GameObject.Find("PopupMenu").GetComponent<PopupMenuFunctions>();
+        List<GameObject> players = GameObject.Find("GameMaster").GetComponent<MapData>().getPlayers();
+        selectedPlayer = TurnManager.playerSelected;
+        /*
+        foreach (GameObject player in players)
+        {
+            if (player.GetComponent<PlayerCharacter>().getSelected())
+            {
+                Debug.Log(selectedPlayer);
+                selectedPlayer = player;
+            }
+        }
+        */
+
+        selectedPlayer.GetComponent<PlayerCharacter>().setSelected(false);
+        popup.setVisibility(false);
+        popup.updateVisibility();
+        selectedPlayer.GetComponent<PlayerCharacter>().inMenu = false;
+        enableCursor = true;
+        TurnManager.playerSelected = null;
     }
 
 

@@ -73,7 +73,7 @@ MonoBehaviour:
   m_FillAmount: 1
   m_FillClockwise: 1
   m_FillOrigin: 0
-  m_UseSpriteMesh: 0
+  m_UseSpriteMesh: 1
   m_PixelsPerUnitMultiplier: 1
 --- !u!114 &8010274717209573319
 MonoBehaviour:
@@ -101,3 +101,4 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   emptyButton: {fileID: 8441616212037400266, guid: e8d9ddbea2ac87d4b97ac84982ecd06a,
     type: 3}
+  enableCursor: 0

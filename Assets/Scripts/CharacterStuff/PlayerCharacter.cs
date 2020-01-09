@@ -4,10 +4,13 @@ using UnityEngine;
 
 public class PlayerCharacter : Character
 {
+    public bool inMenu;
     public bool selected;
     private GameObject cursor;
     private PlayerMove moveController;
     public bool itemsMode = false;
+    public Vector3 startingPosition;
+    public bool hasStartingPosition = false;
 
     void Start()
     {
@@ -19,8 +22,6 @@ public class PlayerCharacter : Character
     // Update is called once per frame
     void Update()
     {
-
-
         if (waiting)
         {
             GetComponent<Animator>().enabled = false;
@@ -31,28 +32,78 @@ public class PlayerCharacter : Character
             GetComponent<Animator>().enabled = true;
             GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("Empty");
         }
+
+
         if (TurnManager.isPlayerPhase)
         {
-            if (cursor.GetComponent<Transform>().position == transform.position && Input.GetMouseButtonUp(0) && getStats().getCanMove())
+
+            if (!hasStartingPosition)
             {
-                selected = true;
+                startingPosition = transform.position;
+                hasStartingPosition = true;
             }
-            if (selected)
+            //Move into turn manager
+            //Debug.Log(moveController.moving);
+            //if (cursor.GetComponent<Transform>().position == transform.position && Input.GetMouseButtonUp(0) && !waiting)
+            //{
+            //selected = true;
+            //TurnManager.playerSelected = gameObject;
+            //moveController.tilesSelected = false;
+            //Debug.Log(moveController.moving);
+            //}
+
+            if (TurnManager.playerSelected != gameObject && !waiting)
             {
-                if (getStats().getCanMove())
+                transform.position = startingPosition;
+                getStats().setCanMove(true);
+                moveController.clearAllTileLists();
+                selected = false;
+                inMenu = false;
+                moveController.tilesSelected = false;
+                if (TurnManager.playerSelected != null && TurnManager.playerSelected.GetComponent<PlayerCharacter>().inMenu != true)
                 {
-                    moveController.setMoveMode(true);
-                    //Highlight movable tiles in blue
-                    //Highlight attackable tiles in red
-                    //Highlight healable tiles in green
-                    //Run pathfinding algorithm and draw arrow until move is selected
+                    GameObject.Find("GameMaster").GetComponent<UIController>().hidePopupMenu();
                 }
+
+            }
+
+            if (selected && getStats().getCanMove() && TurnManager.playerSelected == gameObject)
+            {
+                if (!moveController.moving)
+                {
+                    if (!moveController.tilesSelected)
+                    {
+                        moveController.clearAllTileLists();
+                        moveController.findSelectableTiles();
+                        moveController.highlightAttackableTiles();
+                        moveController.highlightStaffableTiles();
+
+                        moveController.tilesSelected = true;
+                    }
+                    moveController.checkMouse();
+
+                }
+                else if (moveController.moving)
+                {
+                    GameObject.Find("GameMaster").GetComponent<UIController>().disableCursor();
+                    moveController.moveCharacter();
+                    moveController.tilesSelected = false;
+                }
+
                 else if (!moveController.moving && !itemsMode)
                 {
-                    GameObject.Find("GameMaster").GetComponent<UIController>().displayPopupMenu();
-                    GameObject.Find("GameMaster").GetComponent<UIController>().disableCursor();
+
                     //Set Selected To False After Taking Action
                 }
+
+            }
+            else if (selected && !inMenu && !getStats().getCanMove())
+            {
+                moveController.clearAllTileLists();
+                moveController.moving = false;
+                inMenu = true;
+                GameObject.Find("GameMaster").GetComponent<UIController>().displayPopupMenu();
+                GameObject.Find("GameMaster").GetComponent<UIController>().disableCursor();
             }
 
 
@@ -70,6 +121,7 @@ public class PlayerCharacter : Character
 
     public void refresh()
     {
+        hasStartingPosition = false;
         waiting = false;
         getStats().setCanMove(true);
         GameObject.Find("GameMaster").GetComponent<UIController>().enableCursor();

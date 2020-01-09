@@ -14,7 +14,7 @@ public class Character : MonoBehaviour
         generateStats(BASE_STATS);
         inventory = new Inventory();
         //BELOW IS FOR TESTING
-        inventory.addIronSword();
+        // OLD inventory.addIronSword();
 
 
 

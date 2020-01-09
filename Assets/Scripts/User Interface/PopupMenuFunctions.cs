@@ -24,6 +24,7 @@ public class PopupMenuFunctions : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        
         updatePosition();
 
     }
@@ -35,7 +36,7 @@ public class PopupMenuFunctions : MonoBehaviour
 
     public void updatePosition()
     {
-        if (cursor.GetComponent<Transform>().position.x > 9)
+        if (Input.mousePosition.x > Screen.width / 2)
         {
             trans.anchoredPosition = new Vector2(Screen.width / 2 - 100, 0);
 

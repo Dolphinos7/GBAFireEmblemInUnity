@@ -18,6 +18,7 @@ public class TacticsMove : MonoBehaviour
     public List<Tile> selectableTiles = new List<Tile>();
     public List<Tile> attackableTiles = new List<Tile>();
     public List<Tile> staffableTiles = new List<Tile>();
+    public List<Tile> selectableHighlightList = new List<Tile>();
     public GameObject[] tiles;
     Stack<Tile> path = new Stack<Tile>();
     public Tile currentTile;
@@ -74,7 +75,10 @@ public class TacticsMove : MonoBehaviour
         process.Add(currentTile);
         currentTile.visited = true;
         currentTile.selectable = true;
-        selectableTiles.Add(currentTile);
+        if (!selectableTiles.Contains(currentTile))
+        {
+            selectableTiles.Add(currentTile);
+        }
         //Source tile's parent is null
 
         while (process.Count > 0)
@@ -82,16 +86,20 @@ public class TacticsMove : MonoBehaviour
             process.Sort(process.getComparator());
             Tile t = process[0];
             process.RemoveAt(0);
-            if (t.walkable){
-            selectableTiles.Add(t);
+            if (t.walkable && !selectableTiles.Contains(t))
+            {
+                selectableTiles.Add(t);
             }
-            
+
             if (canWalk && !canFly)
             {
                 string tagOn = "";
-                foreach (Collider2D collider in t.GetOnTopOf()){
-                    if (collider.gameObject.tag != null){
-                        if (collider.gameObject.tag == "Player" || collider.gameObject.tag == "Enemy"){
+                foreach (Collider2D collider in t.GetOnTopOf())
+                {
+                    if (collider.gameObject.tag != null)
+                    {
+                        if (collider.gameObject.tag == "Player" || collider.gameObject.tag == "Enemy")
+                        {
                             tagOn = collider.gameObject.tag;
                         }
                         //Debug.Log(tagOn);
@@ -99,7 +107,11 @@ public class TacticsMove : MonoBehaviour
                 }
                 if (t.walkable || tagOn == gameObject.tag || t.Equals(currentTile))
                 {
-
+                    if (tagOn == gameObject.tag)
+                    {
+                        t.selectableHighlight = true;
+                        selectableHighlightList.Add(t);
+                    }
                     foreach (Tile tile in t.adjacencyList)
                     {
 
@@ -119,7 +131,8 @@ public class TacticsMove : MonoBehaviour
 
         }
 
-        foreach (Tile t in selectableTiles){
+        foreach (Tile t in selectableTiles)
+        {
             t.selectable = true;
         }
 
@@ -230,12 +243,29 @@ public class TacticsMove : MonoBehaviour
             removeAttackableTiles();
             removeStaffableTiles();
             removeEdgeTiles();
-            
+
+        }
+
+        if (path.Count == 0 && gameObject.tag == "Player")
+        {
+
+
+            GetComponent<PlayerCharacter>().getStats().setCanMove(false);
+
         }
     }
 
-    
-    public void removeEdgeTiles(){
+    public void clearAllTileLists()
+    {
+        selectableHighlightList.Clear();
+        selectableTiles.Clear();
+        attackableTiles.Clear();
+        staffableTiles.Clear();
+        edgeTiles.Clear();
+    }
+
+    public void removeEdgeTiles()
+    {
         foreach (Tile tile in edgeTiles)
         {
             tile.Reset();
@@ -255,8 +285,13 @@ public class TacticsMove : MonoBehaviour
         {
             tile.Reset();
         }
+        foreach (Tile tile in selectableHighlightList)
+        {
+            tile.Reset();
+        }
 
         selectableTiles.Clear();
+        selectableHighlightList.Clear();
 
     }
 
@@ -326,7 +361,7 @@ public class TacticsMove : MonoBehaviour
                 {
                     currentTile.attackable = true;
 
-                    if (!selectableTiles.Contains(currentTile) && !attackableTiles.Contains(currentTile))
+                    if (!selectableTiles.Contains(currentTile))
                     {
                         currentTile.attackableHighlight = true;
                     }
@@ -375,7 +410,7 @@ public class TacticsMove : MonoBehaviour
                 {
                     currentTile.staffable = true;
 
-                    if (!selectableTiles.Contains(currentTile) && !attackableTiles.Contains(currentTile) && !staffableTiles.Contains(currentTile))
+                    if (!selectableTiles.Contains(currentTile) && !attackableTiles.Contains(currentTile))
                     {
                         currentTile.staffableHighlight = true;
                     }

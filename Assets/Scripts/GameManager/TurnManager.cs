@@ -7,9 +7,15 @@ public class TurnManager : MonoBehaviour
     public static bool isPlayerPhase = true;
     public static Queue<GameObject> enemyQueue;
     public static GameObject currentEnemy;
+    public static GameObject playerSelected = null;
+    GameObject cursor;
 
+    void Start(){
+        cursor = GameObject.Find("Cursor");
+    }
     public static void makePlayerPhase()
     {
+        GameObject.Find("GameMaster").GetComponent<UIController>().enableCursor();
         isPlayerPhase = true;
         FindObjectOfType<TurnManager>().clearTileLists();
         foreach (GameObject t in FindObjectOfType<MapData>().tiles)
@@ -30,6 +36,7 @@ public class TurnManager : MonoBehaviour
 
     public static void makeEnemyPhase()
     {
+                GameObject.Find("GameMaster").GetComponent<UIController>().disableCursor();
         GenerateEnemyQueue();
         FindObjectOfType<TurnManager>().clearTileLists();
         foreach (GameObject t in FindObjectOfType<MapData>().tiles)
@@ -49,10 +56,31 @@ public class TurnManager : MonoBehaviour
         //Refresh enemies
     }
 
+    public void findSelectedPlayer(){
+        if (Input.GetMouseButtonUp(0)){
+            bool setSelected = false;
+            Collider2D[] colliders = Physics2D.OverlapBoxAll(new Vector2(cursor.transform.position.x, cursor.transform.position.y), new Vector2(.25f, .25f), 0f);
+            foreach (Collider2D collider in colliders){
+                if (collider.tag == "Player" &&  !collider.gameObject.GetComponent<PlayerCharacter>().waiting){
+                    setSelected = true;
+                    GameObject.Find("GameMaster").GetComponent<UIController>().enableCursor();
+                    playerSelected = collider.gameObject;
+                    playerSelected.GetComponent<PlayerCharacter>().selected = true;
+                    playerSelected.GetComponent<PlayerMove>().tilesSelected = false;
+                }
+            }
+            if (!setSelected){
+                playerSelected = null;
+            }
+        }
+    }
     public void Update()
     {
         if (isPlayerPhase)
         {
+            if (cursor.activeSelf){
+            findSelectedPlayer();
+            }
             bool changeTurn = true;
             foreach (GameObject character in GetComponent<MapData>().getPlayers())
             {
