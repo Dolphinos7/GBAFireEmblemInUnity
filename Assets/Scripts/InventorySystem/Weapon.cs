@@ -15,6 +15,7 @@ public class Weapon : Item
 
     public Weapon(string name) : base(name)
     {
+        isWeapon = true;
         if (name.Equals("iron sword"))
         {
 
@@ -24,6 +25,16 @@ public class Weapon : Item
             range = 1;
             might = 5;
             hit = 90;
+        }
+        else if (name.Equals("steel sword"))
+        {
+
+            requiredRank = 'D';
+            crit = 0;
+            weight = 3;
+            range = 1;
+            might = 8;
+            hit = 75;
         }
     }
 

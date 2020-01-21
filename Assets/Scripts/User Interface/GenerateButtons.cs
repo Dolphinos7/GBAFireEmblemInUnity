@@ -9,37 +9,33 @@ public class GenerateButtons : MonoBehaviour
     Inventory inventory;
     GameObject selectedPlayer;
     public GameObject emptyButton;
-    private bool waitVisible;
+    private bool waitVisible = false;
     public bool enableCursor;
-    private bool itemVisible;
-    private bool attackVisible;
-    private bool tradeVisible;
-    private bool staffVisible;
-    private bool cancelVisible;
+    private bool itemVisible = false;
+    private bool attackVisible = false;
+    private bool tradeVisible = false;
+    private bool staffVisible = false;
+    private bool cancelVisible = false;
     private int numButtons;
     void Start()
     {
         numButtons = 0;
 
         //TEMP CODE FOR TESTING
-        waitVisible = true;
-        itemVisible = true;
-        attackVisible = true;
-        tradeVisible = true;
-        staffVisible = true;
-        cancelVisible = true;
-        createButtons();
-        hideButtons();
+
     }
 
-    void Update(){
-        if (enableCursor){
+    void Update()
+    {
+        if (enableCursor)
+        {
             GameObject.Find("GameMaster").GetComponent<UIController>().enableCursor();
             enableCursor = false;
         }
     }
     public void createButtons()
     {
+        numButtons = 0;
         if (waitVisible)
         {
             GameObject temp = Instantiate(emptyButton, new Vector3(0, 0, 0), Quaternion.identity);
@@ -98,17 +94,71 @@ public class GenerateButtons : MonoBehaviour
         Text[] texts = gameObject.GetComponentsInChildren<Text>();
         for (int i = 0; i < texts.GetLength(0); i++)
         {
-            texts[i].enabled = false;
+            Destroy(texts[i]);
         }
+
+        itemVisible = false;
+        attackVisible = false;
+        tradeVisible = false;
+        staffVisible = false;
+        cancelVisible = false;
+
+        waitVisible = false;
     }
 
     public void showButtons()
     {
+        ToggleButtonVisibilities();
+        createButtons();
         Text[] texts = gameObject.GetComponentsInChildren<Text>();
         for (int i = 0; i < texts.GetLength(0); i++)
         {
             texts[i].enabled = true;
         }
+    }
+
+    public void ToggleButtonVisibilities()
+    {
+        waitVisible = true;
+        if (TurnManager.playerSelected.GetComponent<PlayerCharacter>().inventory.Count() > 0)
+        {
+            itemVisible = true;
+        }
+        foreach (Tile t in TurnManager.playerSelected.GetComponent<PlayerMove>().attackableTiles)
+        {
+            Collider2D[] colliders = t.GetOnTopOf();
+            foreach (Collider2D collider in colliders)
+            {
+                if (collider.tag == "Enemy")
+                {
+                    attackVisible = true;
+                }
+            }
+        }
+        Tile tile = TurnManager.playerSelected.GetComponent<PlayerMove>().getTargetTile(TurnManager.playerSelected);
+        foreach (Tile t in tile.adjacencyList)
+        {
+            Collider2D[] colliders = t.GetOnTopOf();
+            foreach (Collider2D collider in colliders)
+            {
+                if (collider.tag == "Player")
+                {
+                    tradeVisible = true;
+                }
+            }
+        }
+        foreach (Tile t in TurnManager.playerSelected.GetComponent<PlayerMove>().staffableTiles)
+        {
+            Collider2D[] colliders = t.GetOnTopOf();
+            foreach (Collider2D collider in colliders)
+            {
+                if (collider.tag == "Player")
+                {
+                    staffVisible = true;
+                }
+            }
+        }
+        cancelVisible = true;
     }
 
     public void onWaitButtonClick()
@@ -134,7 +184,6 @@ public class GenerateButtons : MonoBehaviour
 
     public void onItemButtonClick()
     {
-        Debug.Log("running");
         popup = GameObject.Find("PopupMenu").GetComponent<PopupMenuFunctions>();
         List<GameObject> players = GameObject.Find("GameMaster").GetComponent<MapData>().getPlayers();
         foreach (GameObject player in players)

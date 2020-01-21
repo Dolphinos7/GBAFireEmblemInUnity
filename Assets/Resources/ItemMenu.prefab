@@ -59,7 +59,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
-  m_Color: {r: 1, g: 1, b: 1, a: 0.392}
+  m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_RaycastTarget: 1
   m_OnCullStateChanged:
     m_PersistentCalls:
@@ -88,4 +88,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   hasSlot1: 1
   emptyButton: {fileID: 8441616212037400266, guid: e8d9ddbea2ac87d4b97ac84982ecd06a,
+    type: 3}
+  ItemStatBox: {fileID: 1889186477854869088, guid: 1f8d2cc2c1e76f64883e4e761b26f6a9,
+    type: 3}
+  ItemDescriptionBox: {fileID: 6740202965384814540, guid: 94717c30c99dd2b45b0f5127aeb5e18a,
     type: 3}

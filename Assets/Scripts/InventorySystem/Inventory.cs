@@ -2,11 +2,11 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Inventory : List<Item>
+public class Inventory
 {
     private List<Item> itemList;
     private readonly int capacity = 6;
-    
+
     public Inventory()
     {
         itemList = new List<Item>();
@@ -14,7 +14,7 @@ public class Inventory : List<Item>
 
     public bool GiveItem(Item toAdd)
     {
-        if (itemList.Count <= 6)
+        if (itemList.Count <= capacity)
         {
             itemList.Add(toAdd);
             return true;
@@ -35,6 +35,38 @@ public class Inventory : List<Item>
             return GiveItem(toAdd);
         }
         return false;
+    }
+
+    public Item Get(int index)
+    {
+        Item toReturn = null;
+        toReturn = itemList[index];
+        return toReturn;
+    }
+
+    public bool add(Item item)
+    {
+        if (itemList.Count < capacity)
+        {
+            itemList.Add(item);
+            return true;
+        }
+        else
+        {
+            return false;
+        }
+    }
+
+    public override string ToString(){
+        string toReturn = "";
+        foreach (Item i in itemList){
+            toReturn += i.ToString();
+        }
+        return toReturn;
+    }
+
+    public int Count(){
+        return itemList.Count;
     }
 
     /*

@@ -433,6 +433,83 @@ public class TacticsMove : MonoBehaviour
         }
     }
 
+    public void FindTilesToAttack()
+    {
+        for (int i = 0; i < tiles.GetLength(0); i++)
+        {
+            tiles[i].GetComponent<Tile>().visited = false;
+            tiles[i].GetComponent<Tile>().distance = -1;
+            tiles[i].GetComponent<Tile>().current = false;
+        }
+        Tile t = getTargetTile(gameObject);
+        Queue<Tile> process = new Queue<Tile>();
+        t.distance = 0;
+        process.Enqueue(t);
+        t.visited = true;
+
+        while (process.Count > 0)
+        {
+            Tile currentTile = process.Dequeue();
+            if (currentTile.distance >= attackRange[0] && currentTile.distance <= attackRange[1])
+            {
+                currentTile.attackable = true;
+                if (currentTile.attackable && !attackableTiles.Contains(currentTile))
+                {
+                    attackableTiles.Add(currentTile);
+                }
+            }
+            foreach (Tile tile in currentTile.adjacencyList)
+            {
+                
+                if (!tile.visited && currentTile.distance + 1 <= attackRange[1])
+                {
+                    tile.visited = true;
+                    tile.distance = currentTile.distance + 1;
+                    process.Enqueue(tile);
+                }
+            }
+        }
+    }
+
+
+    public void FindTilesToStaff()
+    {
+        for (int i = 0; i < tiles.GetLength(0); i++)
+        {
+            tiles[i].GetComponent<Tile>().visited = false;
+            tiles[i].GetComponent<Tile>().distance = -1;
+            tiles[i].GetComponent<Tile>().current = false;
+        }
+        Tile t = getTargetTile(gameObject);
+        Queue<Tile> process = new Queue<Tile>();
+        t.distance = 0;
+        process.Enqueue(t);
+        t.visited = true;
+
+        while (process.Count > 0)
+        {
+            Tile currentTile = process.Dequeue();
+            if (currentTile.distance >= staffRange[0] && currentTile.distance <= staffRange[1])
+            {
+                currentTile.staffable = true;
+                if (currentTile.staffable && !staffableTiles.Contains(currentTile))
+                {
+                    staffableTiles.Add(currentTile);
+                }
+            }
+            foreach (Tile tile in currentTile.adjacencyList)
+            {
+                
+                if (!tile.visited && currentTile.distance + 1 <= staffRange[1])
+                {
+                    tile.visited = true;
+                    tile.distance = currentTile.distance + 1;
+                    process.Enqueue(tile);
+                }
+            }
+        }
+    }
+
 
 
 }

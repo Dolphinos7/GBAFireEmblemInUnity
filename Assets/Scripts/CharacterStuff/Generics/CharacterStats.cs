@@ -4,25 +4,25 @@ using UnityEngine;
 
 public class CharacterStats
 {
-    private bool canMove;
-    private int level;
-    private int health;
-    private int strength;
-    private int skill;
-    private int speed;
-    private int luck;
-    private int defense;
-    private int resistance;
-    private int constitution;
-    private int movement;
-    private int experience;
-    private double healthGrowth;
-    private double strengthGrowth;
-    private double skillGrowth;
-    private double speedGrowth;
-    private double luckGrowth;
-    private double defenseGrowth;
-    private double resistanceGrowth;
+    public bool canMove;
+    public int level;
+    public int health;
+    public int strength;
+    public int skill;
+    public int speed;
+    public int luck;
+    public int defense;
+    public int resistance;
+    public int constitution;
+    public int movement;
+    public int experience;
+    public double healthGrowth;
+    public double strengthGrowth;
+    public double skillGrowth;
+    public double speedGrowth;
+    public double luckGrowth;
+    public double defenseGrowth;
+    public double resistanceGrowth;
 
 
     public CharacterStats(int lev, int hp, int str, int skl, int spd, int lck, int def, int res, int con, int mov, double healthGrowth, double strengthGrowth, double skillGrowth, double speedGrowth, double luckGrowth, double defenseGrowth, double resistanceGrowth)

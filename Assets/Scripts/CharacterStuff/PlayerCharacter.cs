@@ -17,6 +17,12 @@ public class PlayerCharacter : Character
         cursor = GameObject.Find("Cursor");
         moveController = GetComponent<PlayerMove>();
         init();
+        Weapon tempItem = new Weapon("iron sword");
+        inventory.add(tempItem);
+        Weapon tempItem2 = new Weapon("steel sword");
+        inventory.add(tempItem2);
+        UsableItem tempItem3 = new UsableItem("vulnerary");
+        inventory.add(tempItem3);
     }
 
     // Update is called once per frame
@@ -87,7 +93,7 @@ public class PlayerCharacter : Character
                 {
                     GameObject.Find("GameMaster").GetComponent<UIController>().disableCursor();
                     moveController.moveCharacter();
-                    moveController.tilesSelected = false;
+                    //moveController.tilesSelected = false; Unsure why this is here
                 }
 
                 else if (!moveController.moving && !itemsMode)
@@ -100,6 +106,9 @@ public class PlayerCharacter : Character
             else if (selected && !inMenu && !getStats().getCanMove())
             {
                 moveController.clearAllTileLists();
+                moveController.FindTilesToAttack();
+                moveController.FindTilesToStaff();
+                
                 moveController.moving = false;
                 inMenu = true;
                 GameObject.Find("GameMaster").GetComponent<UIController>().displayPopupMenu();
